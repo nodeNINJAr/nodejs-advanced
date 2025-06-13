@@ -53,8 +53,45 @@ console.log(text);
 
 
 
+// node js stream and buffer
+const readStream = fs.createReadStream('./readAbleFile.text',{encoding:"utf-8"});
+const writeStream = fs.createWriteStream('./writeFile.text', {encoding:"utf-8"});
 
 
+// read the stearm
+readStream.on('data',(data)=>{
+   console.log(data);
+   
+  //  write the stream
+   writeStream.write(data, (err)=>{
+        if(err){
+          throw Error("Error on writing the file", err)
+        }
+   })
+})
 
-// asyncronus
-//  file read -->> single thread --->> event-loop -->> thread pool -->> task complitation
+// errror handle on readstream
+readStream.on('error',(err)=>{
+    if(err){
+        throw Error("Error on reading the file", err) 
+    }
+})
+
+// error handle on write stream
+writeStream.on('error',(err)=>{
+  if(err){
+    throw Error ("Error happning on Write");
+  }
+})
+
+// 
+
+readStream.on("end",()=>{
+    console.log('Stream Ended');
+    writeStream.end();
+})
+
+writeStream.on("finish",()=>{
+    console.log("Writting finnished");
+})
+
